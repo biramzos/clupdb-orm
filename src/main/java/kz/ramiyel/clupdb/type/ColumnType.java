@@ -37,7 +37,7 @@ public enum ColumnType {
     }
 
     public static ColumnType parseFrom(String type) {
-        return typeToEnum.getOrDefault(type, null);
+        return typeToEnum.getOrDefault(type.toUpperCase(), null);
     }
 
     public String getSqlType() {
