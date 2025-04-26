@@ -22,28 +22,29 @@ import java.util.Map;
 import java.util.Set;
 
 public class DBGenerator {
-
+    private final Reflections reflections;
     private final String schema;
     private final int batchSize;
 
-    public DBGenerator() {
-        this("public", 100);
+    public DBGenerator(Reflections reflections) {
+        this(reflections, "public", 100);
     }
 
-    public DBGenerator(String schema) {
-        this(schema, 100);
+    public DBGenerator(Reflections reflections, String schema) {
+        this(reflections, schema, 100);
     }
 
-    public DBGenerator(int batchSize) {
-        this("public", batchSize);
+    public DBGenerator(Reflections reflections, int batchSize) {
+        this(reflections, "public", batchSize);
     }
 
-    public DBGenerator(String schema, int batchSize) {
+    public DBGenerator(Reflections reflections, String schema, int batchSize) {
+        this.reflections = reflections;
         this.schema = schema;
         this.batchSize = batchSize;
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(DB.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DBGenerator.class);
 
     public void execute() {
         try (Connection con = DB.getConnection()) {
@@ -56,7 +57,6 @@ public class DBGenerator {
             ColumnGenerator columnGenerator = new ColumnGenerator(metadata);
             IndexGenerator indexGenerator = new IndexGenerator(metadata);
 
-            Reflections reflections = new Reflections();
             Set<Class<?>> tables = reflections.getTypesAnnotatedWith(DBTable.class);
 
             List<String> tableBatch = new ArrayList<>();
@@ -64,19 +64,19 @@ public class DBGenerator {
             List<String> indexBatch = new ArrayList<>();
 
             for (Class<?> table : tables) {
-                String tableSql = tableGenerator.generate(table);
-                if (StringUtil.isNotEmpty(tableSql)) {
-                    tableBatch.add(tableSql);
+                List<String> tableSql = tableGenerator.generate(table);
+                if (!tableSql.isEmpty()) {
+                    tableBatch.addAll(tableSql);
                 }
 
-                String columnSql = columnGenerator.generate(table);
-                if (StringUtil.isNotEmpty(columnSql)) {
-                    columnBatch.add(columnSql);
+                List<String> columnSql = columnGenerator.generate(table);
+                if (!columnSql.isEmpty()) {
+                    columnBatch.addAll(columnSql);
                 }
 
-                String indexSql = indexGenerator.generate(table);
-                if (StringUtil.isNotEmpty(indexSql)) {
-                    indexBatch.add(indexSql);
+                List<String> indexSql = indexGenerator.generate(table);
+                if (!indexSql.isEmpty()) {
+                    indexBatch.addAll(indexSql);
                 }
 
                 if (tableBatch.size() >= batchSize) {
@@ -99,8 +99,6 @@ public class DBGenerator {
             if (!indexBatch.isEmpty()) {
                 executeBatchAndClear(stmt, indexBatch);
             }
-
-            // Commit the transaction
             con.commit();
 
         } catch (Exception e) {
@@ -109,11 +107,27 @@ public class DBGenerator {
     }
 
     private void executeBatchAndClear(Statement stmt, List<String> batch) throws SQLException {
-        for (String sql : batch) {
-            stmt.addBatch(sql);
+        try {
+            for (String query : batch) {
+                stmt.addBatch(query);
+            }
+            int[] updateCounts = stmt.executeBatch();
+            for (int i = 0; i < updateCounts.length; i++) {
+                if (updateCounts[i] < 0) {
+                    LOG.error("Batch entry " + i + " failed with a negative result: " + updateCounts[i]);
+                }
+            }
+        } catch (BatchUpdateException e) {
+            for (Throwable t : e) {
+                LOG.error("Error processing batch entry", t);
+            }
+            Throwable nextException = e.getNextException();
+            if (nextException != null) {
+                LOG.error("Next exception: ", nextException);
+            }
+        } finally {
+            stmt.clearBatch();
         }
-        stmt.executeBatch();
-        batch.clear();
     }
 
 

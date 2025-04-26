@@ -17,7 +17,7 @@ public class IndexGenerator {
         this.tables = tables;
     }
 
-    public String generate(Class<?> clazz) {
+    public List<String> generate(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(DBTable.class)) return null;
         DBTable tableAnnotation = clazz.getAnnotation(DBTable.class);
         String tableName = StringUtil.isEmpty(tableAnnotation.name()) ? clazz.getSimpleName().toLowerCase() : tableAnnotation.name();
@@ -40,9 +40,9 @@ public class IndexGenerator {
             }
         }
 
-        if (indexStatements.isEmpty()) return null;
+        if (indexStatements.isEmpty()) return new ArrayList<>();
 
-        return String.join("\n", indexStatements);
+        return indexStatements;
     }
 
     private String generateCreateIndex(String fullTableName, IndexModel index) {

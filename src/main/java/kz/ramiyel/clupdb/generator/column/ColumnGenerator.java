@@ -20,7 +20,7 @@ public class ColumnGenerator {
         this.tables = tables;
     }
 
-    public String generate(Class<?> clazz) {
+    public List<String> generate(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(DBTable.class)) return null;
 
         DBTable tableAnnotation = clazz.getAnnotation(DBTable.class);
@@ -51,9 +51,9 @@ public class ColumnGenerator {
             }
         }
 
-        if (alterStatements.isEmpty()) return null;
+        if (alterStatements.isEmpty()) return new ArrayList<>();
 
-        return String.join("\n", alterStatements);
+        return alterStatements;
     }
 
     private String generateAddColumn(String fullTableName, DBColumn column) {

@@ -19,7 +19,7 @@ public class TableGenerator {
         this.tables = tables;
     }
 
-    public String generate(Class<?> clazz) {
+    public List<String> generate(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(DBTable.class)) return null;
         DBTable table = clazz.getAnnotation(DBTable.class);
         if (tables.stream().anyMatch(t -> t.getName().equalsIgnoreCase(table.name()))) return null;
@@ -80,23 +80,22 @@ public class TableGenerator {
         StringJoiner columnDef = new StringJoiner(",\n  ", "(\n  ", "\n)");
         columns.forEach(columnDef::add);
         constraints.forEach(columnDef::add);
-
+        List<String> queries = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("CREATE TABLE ").append(fullTableName).append(" ").append(columnDef).append(";");
 
+        queries.add(sqlBuilder.toString());
         if (StringUtil.isNotEmpty(table.comment())) {
             commentStatements.add("COMMENT ON TABLE " + fullTableName + " IS '" + table.comment() + "';");
         }
-
-        commentStatements.forEach(sql -> sqlBuilder.append("\n").append(sql));
+        queries.addAll(commentStatements);
 
         for (DBIndex index : table.indexes()) {
             indexStatements.add("CREATE INDEX " + index.name() + " ON " + fullTableName + " (" + index.columns() + ");");
         }
+        queries.addAll(indexStatements);
 
-        indexStatements.forEach(sql -> sqlBuilder.append("\n").append(sql));
-
-        return sqlBuilder.toString();
+        return queries;
     }
 
 
