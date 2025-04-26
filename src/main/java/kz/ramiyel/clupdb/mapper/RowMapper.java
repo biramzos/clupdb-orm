@@ -25,7 +25,9 @@ public class RowMapper<T> {
                     if (isAliasExist(rs, field.getName())) {
                         Object value = rs.getObject(field.getName(), field.getType());
                         if (Objects.nonNull(value)) {
-                            getSetter(clazz, field).invoke(instance, value);
+                            field.setAccessible(true);
+                            field.set(instance, value);
+                            field.setAccessible(false);
                         }
                     }
                 } catch (Exception ignored) {}
@@ -38,13 +40,5 @@ public class RowMapper<T> {
 
     private static boolean isAliasExist(ResultSet rs, String alias) throws SQLException {
         return Objects.nonNull(rs.getObject(alias));
-    }
-
-    private static <T> Method getSetter(Class<T> clazz, Field field) throws NoSuchMethodException {
-        return clazz.getMethod("set" + StringUtil.capitalize(field.getName()), field.getType());
-    }
-
-    private static <T> Method getGetter(Class<T> clazz, Field field) throws NoSuchMethodException {
-        return clazz.getMethod(field.getType() == boolean.class ? "is" : "get" + StringUtil.capitalize(field.getName()), field.getType());
     }
 }

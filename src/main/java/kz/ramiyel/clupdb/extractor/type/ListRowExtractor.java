@@ -19,7 +19,9 @@ public class ListRowExtractor<T> implements ResultSetExtractor<List<T>> {
     @Override
     public List<T> extractData(ResultSet resultSet) throws SQLException {
         List<T> list = new ArrayList<>();
-        while(resultSet.next()) list.add(mapper.mapRow(resultSet));
+        while(resultSet.next()) {
+            list.add(mapper.mapRow(resultSet));
+        }
         return list;
     }
 }
