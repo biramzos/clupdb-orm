@@ -65,7 +65,7 @@ public class ColumnGenerator {
 
         if (column.autoIncrement()) {
             if (column.incrementType() == IncrementType.IDENTITY) {
-                sb.append(column.type() == ColumnType.BIGINT ? "BIGSERIAL" : "SERIAL");
+                sb.append(column.type().getSqlType()).append(" GENERATED ALWAYS AS IDENTITY");
             } else if (column.incrementType() == IncrementType.SEQUENCE) {
                 sb.append(column.type().getSqlType());
                 sb.append(" DEFAULT nextval('").append(column.sequence().name()).append("'::regclass)");
