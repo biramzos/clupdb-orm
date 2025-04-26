@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class DBGenerator {
@@ -65,17 +66,17 @@ public class DBGenerator {
 
             for (Class<?> table : tables) {
                 List<String> tableSql = tableGenerator.generate(table);
-                if (!tableSql.isEmpty()) {
+                if (Objects.nonNull(tableSql) && !tableSql.isEmpty()) {
                     tableBatch.addAll(tableSql);
                 }
 
                 List<String> columnSql = columnGenerator.generate(table);
-                if (!columnSql.isEmpty()) {
+                if (Objects.nonNull(columnSql) && !columnSql.isEmpty()) {
                     columnBatch.addAll(columnSql);
                 }
 
                 List<String> indexSql = indexGenerator.generate(table);
-                if (!indexSql.isEmpty()) {
+                if (Objects.nonNull(indexSql) && !indexSql.isEmpty()) {
                     indexBatch.addAll(indexSql);
                 }
 
