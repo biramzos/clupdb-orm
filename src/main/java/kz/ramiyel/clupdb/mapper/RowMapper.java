@@ -43,8 +43,4 @@ public class RowMapper<T> {
     private static <T> Method getSetter(Class<T> clazz, Field field) throws NoSuchMethodException {
         return clazz.getMethod("set" + StringUtil.capitalize(field.getName()), field.getType());
     }
-
-    private static <T> Method getGetter(Class<T> clazz, Field field) throws NoSuchMethodException {
-        return clazz.getMethod(field.getType() == boolean.class ? "is" : "get" + StringUtil.capitalize(field.getName()), field.getType());
-    }
 }
