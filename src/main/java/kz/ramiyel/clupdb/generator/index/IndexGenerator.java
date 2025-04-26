@@ -1,5 +1,6 @@
 package kz.ramiyel.clupdb.generator.index;
 
+import kz.ramiyel.clupdb.annotation.DBIndex;
 import kz.ramiyel.clupdb.annotation.DBTable;
 import kz.ramiyel.clupdb.model.IndexModel;
 import kz.ramiyel.clupdb.model.TableModel;
@@ -32,8 +33,8 @@ public class IndexGenerator {
 
         List<String> indexStatements = new ArrayList<>();
 
-        for (IndexModel index : existingTable.getIndexes()) {
-            IndexModel existingIndex = existingIndexes.get(index.getName());
+        for (DBIndex index : tableAnnotation.indexes()) {
+            IndexModel existingIndex = existingIndexes.getOrDefault(index.name(), null);
 
             if (existingIndex == null) {
                 indexStatements.add(generateCreateIndex(fullTableName, index));
@@ -45,16 +46,16 @@ public class IndexGenerator {
         return indexStatements;
     }
 
-    private String generateCreateIndex(String fullTableName, IndexModel index) {
-        return "CREATE INDEX " + index.getName() +
+    private String generateCreateIndex(String fullTableName, DBIndex index) {
+        return "CREATE INDEX " + index.name() +
                 " ON " + fullTableName +
-                " (" + index.getColumns() + ");";
+                " (" + index.columns() + ");";
     }
 
     private TableModel findTable(String tableName, String schema) {
         return tables.stream()
-                .filter(t -> t.getName().equalsIgnoreCase(tableName) &&
-                        (schema == null || schema.isEmpty() || schema.equalsIgnoreCase(t.getSchema())))
+                .filter(t -> schema == null || schema.isEmpty() || schema.equalsIgnoreCase(t.getSchema()))
+                .filter(t -> t.getName().equalsIgnoreCase(tableName))
                 .findFirst()
                 .orElse(null);
     }
