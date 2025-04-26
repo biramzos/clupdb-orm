@@ -8,6 +8,7 @@ import kz.ramiyel.clupdb.model.ColumnModel;
 import kz.ramiyel.clupdb.model.IndexModel;
 import kz.ramiyel.clupdb.model.TableModel;
 import kz.ramiyel.clupdb.manager.DB;
+import kz.ramiyel.clupdb.type.ColumnType;
 import kz.ramiyel.clupdb.util.StringUtil;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -192,7 +193,7 @@ public class DBGenerator {
                     String columnName = rs.getString("column_name");
                     ColumnModel column = columnMap.getOrDefault(columnName, new ColumnModel());
                     column.setName(columnName);
-                    column.setType(rs.getString("data_type"));
+                    column.setType(ColumnType.parseFrom(rs.getString("data_type")));
                     column.setNotNull("NO".equals(rs.getString("is_nullable")));
                     column.setDefaultValue(rs.getString("column_default"));
 

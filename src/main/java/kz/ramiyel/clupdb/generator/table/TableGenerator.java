@@ -4,6 +4,8 @@ import kz.ramiyel.clupdb.annotation.DBColumn;
 import kz.ramiyel.clupdb.annotation.DBIndex;
 import kz.ramiyel.clupdb.annotation.DBTable;
 import kz.ramiyel.clupdb.model.TableModel;
+import kz.ramiyel.clupdb.type.ColumnType;
+import kz.ramiyel.clupdb.type.IncrementType;
 import kz.ramiyel.clupdb.util.StringUtil;
 
 import java.lang.reflect.Field;
@@ -40,16 +42,24 @@ public class TableGenerator {
             sb.append(column.name()).append(" ");
 
             if (column.autoIncrement()) {
-                sb.append(column.type().equalsIgnoreCase("BIGINT") ? "BIGSERIAL" : "SERIAL");
+                if (column.incrementType() == IncrementType.IDENTITY) {
+                    sb.append(column.type() == ColumnType.BIGINT ? "BIGSERIAL" : "SERIAL");
+                } else if (column.incrementType() == IncrementType.SEQUENCE) {
+                    sb.append(column.type().getSqlType());
+                    sb.append(" DEFAULT nextval('").append(column.sequence().name()).append("'::regclass)");
+                    if (column.sequence().allocationSize() > 0) {
+                        sb.append(" ALLOCATED_SIZE ").append(column.sequence().allocationSize());
+                    }
+                }
             } else {
-                sb.append(column.type());
+                sb.append(column.type().getSqlType());
             }
 
             if (column.notNull()) sb.append(" NOT NULL");
             if (column.unique()) sb.append(" UNIQUE");
 
             if (StringUtil.isNotEmpty(column.defaultValue())) {
-                String type = column.type().toUpperCase();
+                String type = column.type().getSqlType();
                 String defaultValue = column.defaultValue();
 
                 if (type.contains("CHAR") || type.contains("TEXT") || type.contains("VARCHAR")) {

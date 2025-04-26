@@ -4,6 +4,7 @@ import kz.ramiyel.clupdb.annotation.DBColumn;
 import kz.ramiyel.clupdb.annotation.DBTable;
 import kz.ramiyel.clupdb.model.ColumnModel;
 import kz.ramiyel.clupdb.model.TableModel;
+import kz.ramiyel.clupdb.type.ColumnType;
 import kz.ramiyel.clupdb.util.StringUtil;
 
 import java.lang.reflect.Field;
@@ -62,7 +63,7 @@ public class ColumnGenerator {
         sb.append(column.name()).append(" ");
 
         if (column.autoIncrement()) {
-            sb.append(column.type().equalsIgnoreCase("BIGINT") ? "BIGSERIAL" : "SERIAL");
+            sb.append(column.type() == ColumnType.BIGINT ? "BIGSERIAL" : "SERIAL");
         } else {
             sb.append(column.type());
         }
@@ -85,7 +86,7 @@ public class ColumnGenerator {
     private List<String> generateAlterColumn(String fullTableName, DBColumn column, ColumnModel existing) {
         List<String> alterations = new ArrayList<>();
 
-        if (!StringUtil.equalsIgnoreCase(column.type(), existing.getType())) {
+        if (!StringUtil.equalsIgnoreCase(column.type().name(), existing.getType().name())) {
             alterations.add("ALTER TABLE " + fullTableName + " ALTER COLUMN " + column.name()
                     + " TYPE " + column.type() + ";");
         }
@@ -123,8 +124,8 @@ public class ColumnGenerator {
                 .orElse(null);
     }
 
-    private String formatDefaultValue(String defaultValue, String type) {
-        if (type.equalsIgnoreCase("VARCHAR") || type.equalsIgnoreCase("TEXT") || type.toLowerCase().contains("char")) {
+    private String formatDefaultValue(String defaultValue, ColumnType type) {
+        if (type.name().contains("VARCHAR") || type == ColumnType.TEXT || type.name().toLowerCase().contains("char")) {
             return "'" + defaultValue.replace("'", "''") + "'";
         }
         return defaultValue;

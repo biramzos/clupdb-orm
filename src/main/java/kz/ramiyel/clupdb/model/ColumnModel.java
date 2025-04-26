@@ -1,8 +1,10 @@
 package kz.ramiyel.clupdb.model;
 
+import kz.ramiyel.clupdb.type.ColumnType;
+
 public class ColumnModel {
     private String name;
-    private String type;
+    private ColumnType type;
     private String comment;
     private boolean unique;
     private boolean primaryKey;
@@ -21,11 +23,11 @@ public class ColumnModel {
         this.name = name;
     }
 
-    public String getType() {
+    public ColumnType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ColumnType type) {
         this.type = type;
     }
 
