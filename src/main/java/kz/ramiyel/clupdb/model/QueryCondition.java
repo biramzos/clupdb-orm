@@ -42,7 +42,7 @@ public class QueryCondition extends DBCondition {
         if (column == null) {
             return "1 " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
         }
-        return column + " " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
+        return column.toSql() + " " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
     }
 
     private String formatValue(Object value) {
