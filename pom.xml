@@ -10,7 +10,7 @@
     </parent>
     <groupId>kz.ramiyel</groupId>
     <artifactId>clupdb</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>clupdb</name>
     <description>Clupdb orm</description>
     <developers>
