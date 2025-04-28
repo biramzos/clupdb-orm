@@ -26,32 +26,32 @@ public class DBSelectQuery extends DBQuery {
         super(table, QueryType.SELECT);
     }
 
-    public DBQuery select(QuerySelection... selections) {
+    public DBSelectQuery select(QuerySelection... selections) {
         this.selections.addAll(Arrays.stream(selections).toList());
         return this;
     }
 
-    public DBQuery join(QueryJoin... joins) {
+    public DBSelectQuery join(QueryJoin... joins) {
         this.joins.addAll(Arrays.stream(joins).toList());
         return this;
     }
 
-    public DBQuery where(DBCondition... conditions) {
+    public DBSelectQuery where(DBCondition... conditions) {
         this.conditions.addAll(Arrays.stream(conditions).toList());
         return this;
     }
 
-    public DBQuery groupBy(String... columns) {
+    public DBSelectQuery groupBy(String... columns) {
         this.groups.addAll(Arrays.stream(columns).toList());
         return this;
     }
 
-    public DBQuery orderBy(QueryOrderBy... orders) {
+    public DBSelectQuery orderBy(QueryOrderBy... orders) {
         this.orders.addAll(Arrays.stream(orders).toList());
         return this;
     }
 
-    public DBQuery limit(Integer limit) {
+    public DBSelectQuery limit(Integer limit) {
         if (Objects.nonNull(limit)) {
             this.limit = limit;
         } else {
