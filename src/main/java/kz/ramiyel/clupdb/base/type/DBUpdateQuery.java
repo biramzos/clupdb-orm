@@ -5,6 +5,7 @@ import kz.ramiyel.clupdb.enums.QueryType;
 import kz.ramiyel.clupdb.model.DBCondition;
 import kz.ramiyel.clupdb.model.QuerySelection;
 import kz.ramiyel.clupdb.model.QueryTable;
+import kz.ramiyel.clupdb.util.TableUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +16,8 @@ public class DBUpdateQuery extends DBQuery {
     private List<QuerySelection> selections = new ArrayList<>();
     private List<DBCondition> conditions = new ArrayList<>();
 
-    public DBUpdateQuery(QueryTable table) {
-        super(table, QueryType.UPDATE);
+    public DBUpdateQuery(Class<?> clazz) {
+        super(TableUtil.parseTable(clazz), QueryType.UPDATE);
     }
 
     public DBUpdateQuery select(QuerySelection... selections) {

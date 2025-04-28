@@ -10,6 +10,7 @@ import kz.ramiyel.clupdb.enums.QueryType;
 import kz.ramiyel.clupdb.model.TableJoin;
 import kz.ramiyel.clupdb.model.TableRoot;
 import kz.ramiyel.clupdb.processor.ConditionProcessor;
+import kz.ramiyel.clupdb.util.TableUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,8 +29,8 @@ public class DBSelectQuery extends DBQuery {
     private Integer limit = null;
     private Integer offset = null;
 
-    public DBSelectQuery(QueryTable table) {
-        super(table, QueryType.SELECT);
+    public DBSelectQuery(Class<?> clazz) {
+        super(TableUtil.parseTable(clazz), QueryType.SELECT);
     }
 
     public DBSelectQuery select(QuerySelection... selections) {
