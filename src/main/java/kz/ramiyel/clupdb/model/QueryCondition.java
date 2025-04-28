@@ -15,6 +15,12 @@ public class QueryCondition extends DBCondition {
         this.value = value;
     }
 
+    public QueryCondition(QuerySelection selection, DBOperator operator, QuerySelection value) {
+        this.column = selection;
+        this.operator = operator;
+        this.value = value;
+    }
+
     public QueryCondition(QuerySelection selection, DBOperator operator) {
         if (operator.isNeedValue()) {
             throw new ValueNotFountException();
@@ -23,6 +29,14 @@ public class QueryCondition extends DBCondition {
             this.operator = operator;
             this.value = null;
         }
+    }
+
+    public static QueryCondition of(QuerySelection selection, DBOperator operator, Object value) {
+        return new QueryCondition(selection, operator, value);
+    }
+
+    public static QueryCondition of(QuerySelection selection, DBOperator operator, QuerySelection value) {
+        return new QueryCondition(selection, operator, value);
     }
 
     public QuerySelection getColumn() {
@@ -42,7 +56,7 @@ public class QueryCondition extends DBCondition {
         if (column == null) {
             return "1 " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
         }
-        return column.toSql() + " " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
+        return column.getExpression() + " " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
     }
 
     private String formatValue(Object value) {
