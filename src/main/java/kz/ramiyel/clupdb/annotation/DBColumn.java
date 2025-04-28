@@ -1,7 +1,7 @@
 package kz.ramiyel.clupdb.annotation;
 
-import kz.ramiyel.clupdb.type.ColumnType;
-import kz.ramiyel.clupdb.type.IncrementType;
+import kz.ramiyel.clupdb.enums.ColumnType;
+import kz.ramiyel.clupdb.enums.IncrementType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

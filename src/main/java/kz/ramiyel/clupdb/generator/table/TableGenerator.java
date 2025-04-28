@@ -4,8 +4,7 @@ import kz.ramiyel.clupdb.annotation.DBColumn;
 import kz.ramiyel.clupdb.annotation.DBIndex;
 import kz.ramiyel.clupdb.annotation.DBTable;
 import kz.ramiyel.clupdb.model.TableModel;
-import kz.ramiyel.clupdb.type.ColumnType;
-import kz.ramiyel.clupdb.type.IncrementType;
+import kz.ramiyel.clupdb.enums.IncrementType;
 import kz.ramiyel.clupdb.util.StringUtil;
 
 import java.lang.reflect.Field;

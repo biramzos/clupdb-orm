@@ -1,4 +1,4 @@
-package kz.ramiyel.clupdb.type;
+package kz.ramiyel.clupdb.enums;
 
 public enum IncrementType {
     IDENTITY,

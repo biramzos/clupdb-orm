@@ -1,0 +1,39 @@
+package kz.ramiyel.clupdb.base.type;
+
+import kz.ramiyel.clupdb.base.DBQuery;
+import kz.ramiyel.clupdb.enums.QueryType;
+import kz.ramiyel.clupdb.model.DBCondition;
+import kz.ramiyel.clupdb.model.QuerySelection;
+import kz.ramiyel.clupdb.model.QueryTable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class DBUpdateQuery extends DBQuery {
+
+    private List<QuerySelection> selections = new ArrayList<>();
+    private List<DBCondition> conditions = new ArrayList<>();
+
+    public DBUpdateQuery(QueryTable table) {
+        super(table, QueryType.UPDATE);
+    }
+
+    public DBUpdateQuery select(QuerySelection... selections) {
+        this.selections.addAll(Arrays.asList(selections));
+        return this;
+    }
+
+    public DBUpdateQuery where(DBCondition... conditions) {
+        this.conditions.addAll(Arrays.asList(conditions));
+        return this;
+    }
+
+    public List<QuerySelection> getSelections() {
+        return selections;
+    }
+
+    public List<DBCondition> getConditions() {
+        return conditions;
+    }
+}

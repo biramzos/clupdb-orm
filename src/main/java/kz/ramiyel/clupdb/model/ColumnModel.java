@@ -1,6 +1,6 @@
 package kz.ramiyel.clupdb.model;
 
-import kz.ramiyel.clupdb.type.ColumnType;
+import kz.ramiyel.clupdb.enums.ColumnType;
 
 public class ColumnModel {
     private String name;

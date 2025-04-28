@@ -38,6 +38,14 @@ public class DB {
         return runQuery(con, query, new SingleRowExtractor<>(new RowMapper<>(clazz)), parameters);
     }
 
+    public static void execute(String query, Object... parameters) throws SQLException {
+        execute(null, query, parameters);
+    }
+
+    public static void execute(Connection con, String query, Object... parameters) throws SQLException {
+        runQuery(con, query, null, parameters);
+    }
+
     private static <T> T runQuery(Connection con, String query, ResultSetExtractor<T> extractor, Object... parameters) throws SQLException {
         boolean selfConnection = Objects.isNull(con);
         try {

@@ -1,4 +1,4 @@
-package kz.ramiyel.clupdb.type;
+package kz.ramiyel.clupdb.enums;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
