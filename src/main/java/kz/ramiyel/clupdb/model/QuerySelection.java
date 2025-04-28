@@ -3,11 +3,12 @@ package kz.ramiyel.clupdb.model;
 import kz.ramiyel.clupdb.util.StringUtil;
 
 public class QuerySelection {
-
+    private final QueryTable table;
     private final String expression;
     private final String alias;
 
-    public QuerySelection(String expression, String alias) {
+    public QuerySelection(QueryTable table, String expression, String alias) {
+        this.table = table;
         this.expression = expression;
         this.alias = alias;
     }

@@ -7,18 +7,24 @@ import kz.ramiyel.clupdb.model.QueryOrderBy;
 import kz.ramiyel.clupdb.model.QueryTable;
 import kz.ramiyel.clupdb.model.QuerySelection;
 import kz.ramiyel.clupdb.enums.QueryType;
+import kz.ramiyel.clupdb.model.TableJoin;
+import kz.ramiyel.clupdb.model.TableRoot;
+import kz.ramiyel.clupdb.processor.ConditionProcessor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DBSelectQuery extends DBQuery {
 
-    private List<QuerySelection> selections = new ArrayList<>();
-    private List<QueryJoin> joins = new ArrayList<>();
-    private List<DBCondition> conditions = new ArrayList<>();
-    private List<String> groups = new ArrayList<>();
-    private List<QueryOrderBy> orders = new ArrayList<>();
+    private List<QuerySelection> selections = new LinkedList<>();
+    private List<QueryJoin> joins = new LinkedList<>();
+    private List<DBCondition> conditions = new LinkedList<>();
+    private List<String> groups = new LinkedList<>();
+    private List<QueryOrderBy> orders = new LinkedList<>();
     private Integer limit = null;
     private Integer offset = null;
 
@@ -39,6 +45,10 @@ public class DBSelectQuery extends DBQuery {
     public DBSelectQuery where(DBCondition... conditions) {
         this.conditions.addAll(Arrays.stream(conditions).toList());
         return this;
+    }
+
+    public DBSelectQuery where(TableRoot root, ConditionProcessor processor) {
+        return where(processor.process(root, mapJoins()));
     }
 
     public DBSelectQuery groupBy(String... columns) {
@@ -95,5 +105,9 @@ public class DBSelectQuery extends DBQuery {
 
     public Integer getOffset() {
         return offset;
+    }
+
+    private TableJoin[] mapJoins() {
+        return this.joins.stream().map(join -> new TableJoin<>(join.getFromClass(), join.getJoinClass())).toArray(TableJoin[]::new);
     }
 }

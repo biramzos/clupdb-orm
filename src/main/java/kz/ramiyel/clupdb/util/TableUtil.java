@@ -14,7 +14,7 @@ public class TableUtil {
     public static QueryTable parseTable(Class<?> clazz) {
         if (clazz.isAnnotationPresent(DBTable.class)) {
             DBTable table = clazz.getAnnotation(DBTable.class);
-            return new QueryTable(table.schema(), table.name());
+            return new QueryTable(table.schema(), table.name(), clazz);
         }
         throw new TableNotFoundException();
     }

@@ -3,28 +3,26 @@ package kz.ramiyel.clupdb.model;
 import kz.ramiyel.clupdb.util.StringUtil;
 
 public class QueryTable {
-    private String schema;
-    private String table;
+    private final String schema;
+    private final String table;
+    private final Class tableClazz;
 
-    public QueryTable(String schema, String table) {
+    public QueryTable(String schema, String table, Class tableClazz) {
         this.schema = schema;
         this.table = table;
+        this.tableClazz = tableClazz;
     }
 
     public String getSchema() {
         return schema;
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
     public String getTable() {
         return table;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public Class getTableClazz() {
+        return tableClazz;
     }
 
     public String toSql() {

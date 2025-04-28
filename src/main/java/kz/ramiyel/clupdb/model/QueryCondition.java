@@ -1,20 +1,31 @@
 package kz.ramiyel.clupdb.model;
 
 import kz.ramiyel.clupdb.enums.DBOperator;
+import kz.ramiyel.clupdb.exception.ValueNotFountException;
 
 public class QueryCondition extends DBCondition {
 
-    private String column;
-    private DBOperator operator;
-    private Object value;
+    private final QuerySelection column;
+    private final DBOperator operator;
+    private final Object value;
 
-    public QueryCondition(String column, DBOperator operator, Object value) {
-        this.column = column;
+    public QueryCondition(QuerySelection selection, DBOperator operator, Object value) {
+        this.column = selection;
         this.operator = operator;
         this.value = value;
     }
 
-    public String getColumn() {
+    public QueryCondition(QuerySelection selection, DBOperator operator) {
+        if (operator.isNeedValue()) {
+            throw new ValueNotFountException();
+        } else {
+            this.column = selection;
+            this.operator = operator;
+            this.value = null;
+        }
+    }
+
+    public QuerySelection getColumn() {
         return column;
     }
 
@@ -28,7 +39,10 @@ public class QueryCondition extends DBCondition {
 
     @Override
     public String toSql() {
-        return column + " " + operator.getSql() + " " + formatValue(value);
+        if (column == null) {
+            return "1 " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
+        }
+        return column + " " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
     }
 
     private String formatValue(Object value) {
@@ -37,6 +51,9 @@ public class QueryCondition extends DBCondition {
         }
         if (value == null) {
             return "NULL";
+        }
+        if (value instanceof QuerySelection selection) {
+            return selection.getExpression();
         }
         return String.valueOf(value);
     }
