@@ -38,6 +38,8 @@ public class DBPredicate extends DBCondition {
                 .map(condition -> {
                     if (condition instanceof QueryCondition) {
                         return "(" + condition.toSql() + ")";
+                    } else if (condition instanceof QueryHaving) {
+                        return "(" + condition.toSql() + ")";
                     } else if (condition instanceof DBPredicate) {
                         return "(" + condition.toSql() + ")";
                     } else {

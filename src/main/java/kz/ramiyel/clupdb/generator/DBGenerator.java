@@ -1,18 +1,25 @@
 package kz.ramiyel.clupdb.generator;
 
+import kz.ramiyel.clupdb.annotation.DBFunction;
+import kz.ramiyel.clupdb.annotation.DBManagement;
+import kz.ramiyel.clupdb.annotation.DBProcedure;
 import kz.ramiyel.clupdb.annotation.DBTable;
+import kz.ramiyel.clupdb.annotation.DBTransaction;
 import kz.ramiyel.clupdb.generator.column.ColumnGenerator;
 import kz.ramiyel.clupdb.generator.index.IndexGenerator;
+import kz.ramiyel.clupdb.generator.management.FunctionGenerator;
+import kz.ramiyel.clupdb.generator.management.ProcedureGenerator;
+import kz.ramiyel.clupdb.generator.management.TransactionGenerator;
 import kz.ramiyel.clupdb.generator.table.TableGenerator;
 import kz.ramiyel.clupdb.model.ColumnModel;
 import kz.ramiyel.clupdb.model.IndexModel;
 import kz.ramiyel.clupdb.model.TableModel;
 import kz.ramiyel.clupdb.manager.DB;
 import kz.ramiyel.clupdb.enums.ColumnType;
+import kz.ramiyel.clupdb.util.StringUtil;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,6 +107,59 @@ public class DBGenerator {
             if (!indexBatch.isEmpty()) {
                 executeBatchAndClear(stmt, indexBatch);
             }
+
+            FunctionGenerator functionGenerator = new FunctionGenerator();
+            ProcedureGenerator procedureGenerator = new ProcedureGenerator();
+            TransactionGenerator transactionGenerator = new TransactionGenerator();
+
+            Set<Class<?>> managements = reflections.getTypesAnnotatedWith(DBManagement.class);
+            List<String> functionBatch = new ArrayList<>();
+            List<String> procedureBatch = new ArrayList<>();
+            List<String> transactionBatch = new ArrayList<>();
+            for (Class<?> management : managements) {
+                DBManagement dbManagement = management.getAnnotation(DBManagement.class);
+                for(DBFunction function : dbManagement.functions()) {
+                    String functionSql = functionGenerator.generate(function);
+                    if (StringUtil.isNotEmpty(functionSql)) {
+                        functionBatch.add(functionSql);
+                    }
+                }
+
+                for(DBProcedure procedure : dbManagement.procedures()) {
+                    String procedureSql = procedureGenerator.generate(procedure);
+                    if (StringUtil.isNotEmpty(procedureSql)) {
+                        procedureBatch.add(procedureSql);
+                    }
+                }
+
+                for(DBTransaction transaction : dbManagement.transactions()) {
+                    String transactionSql = transactionGenerator.generate(transaction);
+                    if (StringUtil.isNotEmpty(transactionSql)) {
+                        transactionBatch.add(transactionSql);
+                    }
+                }
+
+                if (functionBatch.size() >= batchSize) {
+                    executeBatchAndClear(stmt, functionBatch);
+                }
+                if (procedureBatch.size() >= batchSize) {
+                    executeBatchAndClear(stmt, procedureBatch);
+                }
+                if (transactionBatch.size() >= batchSize) {
+                    executeBatchAndClear(stmt, transactionBatch);
+                }
+            }
+
+            if (!functionBatch.isEmpty()) {
+                executeBatchAndClear(stmt, functionBatch);
+            }
+            if (!procedureBatch.isEmpty()) {
+                executeBatchAndClear(stmt, procedureBatch);
+            }
+            if (!transactionBatch.isEmpty()) {
+                executeBatchAndClear(stmt, transactionBatch);
+            }
+
             con.commit();
 
         } catch (Exception e) {
