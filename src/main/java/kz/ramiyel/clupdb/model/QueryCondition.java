@@ -2,6 +2,7 @@ package kz.ramiyel.clupdb.model;
 
 import kz.ramiyel.clupdb.enums.DBOperator;
 import kz.ramiyel.clupdb.exception.ValueNotFountException;
+import kz.ramiyel.clupdb.util.ValueUtil;
 
 public class QueryCondition extends DBCondition {
 
@@ -54,22 +55,9 @@ public class QueryCondition extends DBCondition {
     @Override
     public String toSql() {
         if (column == null) {
-            return "1 " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
+            return "1 " + operator.getSql() + (operator.isNeedValue() ? " " + ValueUtil.formatValue(value) : "");
         }
-        return column.getExpression() + " " + operator.getSql() + (operator.isNeedValue() ? " " + formatValue(value) : "");
-    }
-
-    private String formatValue(Object value) {
-        if (value instanceof String) {
-            return "'" + value + "'";
-        }
-        if (value == null) {
-            return "NULL";
-        }
-        if (value instanceof QuerySelection selection) {
-            return selection.getExpression();
-        }
-        return String.valueOf(value);
+        return column.getExpression() + " " + operator.getSql() + (operator.isNeedValue() ? " " + ValueUtil.formatValue(value) : "");
     }
 
 }
