@@ -12,6 +12,10 @@ public class DBExecutor {
         return QueryProcessor.getProcessor(query, parameters).process();
     }
 
+    public static PreparedQuery getPreparedQuery(DBQuery query, Object... parameters) {
+        return toPreparedQuery(query, parameters);
+    }
+
     public static <T> List<T> getList(Class<T> clazz, DBQuery query, Object... parameters) {
         try {
             PreparedQuery preparedQuery = toPreparedQuery(query, parameters);
