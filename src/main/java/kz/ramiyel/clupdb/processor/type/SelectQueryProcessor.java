@@ -3,7 +3,6 @@ package kz.ramiyel.clupdb.processor.type;
 import kz.ramiyel.clupdb.base.type.DBSelectQuery;
 import kz.ramiyel.clupdb.model.DBCondition;
 import kz.ramiyel.clupdb.model.PreparedQuery;
-import kz.ramiyel.clupdb.model.QueryHaving;
 import kz.ramiyel.clupdb.model.QueryJoin;
 import kz.ramiyel.clupdb.model.QueryOrderBy;
 import kz.ramiyel.clupdb.model.QuerySelection;
