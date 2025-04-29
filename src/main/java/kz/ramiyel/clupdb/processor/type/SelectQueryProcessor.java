@@ -1,6 +1,7 @@
 package kz.ramiyel.clupdb.processor.type;
 
 import kz.ramiyel.clupdb.base.type.DBSelectQuery;
+import kz.ramiyel.clupdb.model.DBCondition;
 import kz.ramiyel.clupdb.model.PreparedQuery;
 import kz.ramiyel.clupdb.model.QueryHaving;
 import kz.ramiyel.clupdb.model.QueryJoin;
@@ -59,7 +60,7 @@ public class SelectQueryProcessor extends QueryProcessor {
                     .append(
                             query.getHavings()
                                     .stream()
-                                    .map(QueryHaving::toSql)
+                                    .map(DBCondition::toSql)
                                     .collect(Collectors.joining(" AND "))
                     );
         }
