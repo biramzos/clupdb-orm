@@ -9,13 +9,15 @@ public class QueryJoin<From, Join> {
     private JoinType joinType;
     private String fromVariable;
     private String joinVariable;
+    private String[] additionalConditions;
 
-    public QueryJoin(Class<From> fromClass, Class<Join> joinClass, JoinType joinType, String fromVariable, String joinVariable) {
+    public QueryJoin(Class<From> fromClass, Class<Join> joinClass, JoinType joinType, String fromVariable, String joinVariable, String... additionalConditions) {
         this.fromClass = fromClass;
         this.joinClass = joinClass;
         this.joinType = joinType;
         this.fromVariable = fromVariable;
         this.joinVariable = joinVariable;
+        this.additionalConditions = additionalConditions;
     }
 
     public Class<From> getFromClass() {
@@ -45,6 +47,15 @@ public class QueryJoin<From, Join> {
         QueryColumn fromColumn = TableUtil.parseColumn(fromClass, fromTable, fromVariable);
         QueryColumn joinColumn = TableUtil.parseColumn(joinClass, joinTable, joinVariable);
 
+        if (this.additionalConditions.length > 0) {
+            return String.format("%s %s ON %s = %s AND %s",
+                    joinType.getSql(),
+                    joinTable.toSql(),
+                    fromColumn.toSql(),
+                    joinColumn.toSql(),
+                    String.join(" AND ", additionalConditions)
+            );
+        }
         return String.format("%s %s ON %s = %s",
                 joinType.getSql(),
                 joinTable.toSql(),
