@@ -54,10 +54,25 @@ public class QueryCondition extends DBCondition {
 
     @Override
     public String toSql() {
+        StringBuilder builder = new StringBuilder();
         if (column == null) {
-            return "1 " + operator.getSql() + (operator.isNeedValue() ? " " + ValueUtil.formatValue(value) : "");
+            builder.append("1 ");
+        } else {
+            builder.append(column.getExpression()).append(" ");
         }
-        return column.getExpression() + " " + operator.getSql() + (operator.isNeedValue() ? " " + ValueUtil.formatValue(value) : "");
+        builder.append(operator.getSql());
+        if (operator.isNeedValue()) {
+            builder.append(" ");
+            if (value instanceof QueryExpression exp) {
+                builder.append(exp.toSql());
+            } else if (value instanceof QuerySelection selection) {
+                builder.append(selection.getExpression());
+            } else {
+                getParameters().add(value);
+                return "?";
+            }
+        }
+        return builder.toString();
     }
 
 }

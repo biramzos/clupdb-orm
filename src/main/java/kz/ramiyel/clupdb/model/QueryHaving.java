@@ -73,7 +73,8 @@ public class QueryHaving extends DBCondition {
             } else if (value instanceof QuerySelection selection) {
                 sql.append(selection.getExpression());
             } else {
-                sql.append(ValueUtil.formatValue(value));
+                getParameters().add(value);
+                return "?";
             }
         }
         return sql.toString();

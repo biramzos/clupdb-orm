@@ -1,7 +1,10 @@
 package kz.ramiyel.clupdb.model;
 
 import kz.ramiyel.clupdb.enums.DBOperator;
+import kz.ramiyel.clupdb.model.DBCondition;
+import kz.ramiyel.clupdb.model.QueryCondition;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +18,7 @@ public class DBPredicate extends DBCondition {
     private final List<DBCondition> conditions;
     private final Operator operator;
 
-    private DBPredicate(Operator operator, List<DBCondition> conditions) {
+    private DBPredicate(Operator operator, List<DBCondition> conditions, Object... parameters) {
         this.operator = operator;
         this.conditions = conditions;
     }
@@ -47,5 +50,12 @@ public class DBPredicate extends DBCondition {
                     }
                 })
                 .collect(Collectors.joining(" " + operator.name() + " "));
+    }
+
+    @Override
+    public List<Object> getParameters() {
+        return conditions.stream()
+                .flatMap(condition -> condition.getParameters().stream())
+                .collect(Collectors.toList());
     }
 }

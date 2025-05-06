@@ -21,7 +21,10 @@ public class DeleteQueryProcessor extends QueryProcessor {
                     .append(
                             deleteQuery.getConditions()
                                     .stream()
-                                    .map(dbCondition -> "(" + dbCondition.toSql() + ")")
+                                    .map(dbCondition -> {
+                                        getParameters().addAll(dbCondition.getParameters());
+                                        return "(" + dbCondition.toSql() + ")";
+                                    })
                                     .collect(Collectors.joining(" AND "))
                     );
         }

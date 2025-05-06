@@ -12,14 +12,19 @@ import kz.ramiyel.clupdb.processor.type.InsertQueryProcessor;
 import kz.ramiyel.clupdb.processor.type.SelectQueryProcessor;
 import kz.ramiyel.clupdb.processor.type.UpdateQueryProcessor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class QueryProcessor {
 
     private final DBQuery query;
-    private final Object[] parameters;
+    private final List<Object> parameters;
 
     public QueryProcessor(DBQuery query, Object... parameters) {
         this.query = query;
-        this.parameters = parameters;
+        this.parameters = new ArrayList<>();
+        this.parameters.addAll(Arrays.stream(parameters).toList());
     }
 
     public abstract PreparedQuery process();
@@ -28,7 +33,7 @@ public abstract class QueryProcessor {
         return query;
     }
 
-    public Object[] getParameters() {
+    public List<Object> getParameters() {
         return parameters;
     }
 

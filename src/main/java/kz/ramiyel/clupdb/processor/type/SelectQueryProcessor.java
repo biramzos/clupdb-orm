@@ -42,7 +42,10 @@ public class SelectQueryProcessor extends QueryProcessor {
                     .append(
                             query.getConditions()
                                     .stream()
-                                    .map(dbCondition -> "(" + dbCondition.toSql() + ")")
+                                    .map(dbCondition -> {
+                                        getParameters().addAll(dbCondition.getParameters());
+                                        return "(" + dbCondition.toSql() + ")";
+                                    })
                                     .collect(Collectors.joining(" AND "))
                     );
         }
@@ -59,7 +62,10 @@ public class SelectQueryProcessor extends QueryProcessor {
                     .append(
                             query.getHavings()
                                     .stream()
-                                    .map(DBCondition::toSql)
+                                    .map(dbCondition -> {
+                                        getParameters().addAll(dbCondition.getParameters());
+                                        return "(" + dbCondition.toSql() + ")";
+                                    })
                                     .collect(Collectors.joining(" AND "))
                     );
         }
