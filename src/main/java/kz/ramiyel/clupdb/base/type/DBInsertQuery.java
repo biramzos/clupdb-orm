@@ -37,6 +37,16 @@ public class DBInsertQuery extends DBQuery {
         return this;
     }
 
+    public DBInsertQuery valueList(List<Object> parameters) {
+        value(parameters.toArray());
+        return this;
+    }
+
+    public DBInsertQuery values(List<List<Object>> parameters) {
+        parameters.forEach(this::valueList);
+        return this;
+    }
+
     public List<QueryColumn> getColumns() {
         return columns;
     }
