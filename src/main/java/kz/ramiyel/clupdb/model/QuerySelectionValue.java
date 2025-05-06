@@ -39,12 +39,4 @@ public class QuerySelectionValue {
     public Object getValue() {
         return value;
     }
-
-    public String toSql() {
-        if (selection.getValue() instanceof QueryExpression) {
-
-        } else if () {
-
-        }
-    }
 }
