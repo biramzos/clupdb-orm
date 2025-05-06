@@ -20,6 +20,10 @@ public class QueryJoin<From, Join> {
         this.additionalConditions = additionalConditions;
     }
 
+    public static <F, J> QueryJoin<F, J> of(Class<F> fromClass, Class<J> joinClass, JoinType joinType, String fromVariable, String joinVariable, String... additionalConditions) {
+        return new QueryJoin<>(fromClass, joinClass, joinType, fromVariable, joinVariable, additionalConditions);
+    }
+
     public Class<From> getFromClass() {
         return fromClass;
     }
