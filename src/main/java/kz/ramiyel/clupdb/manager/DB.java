@@ -136,19 +136,20 @@ public class DB {
     }
 
     private static void showQuery(String query, Object... parameters) {
-        String showSqlQueryValue = System.getProperty(PropertyConstants.SHOW_SQL_QUERY);
-        if (Objects.nonNull(showSqlQueryValue)) {
-            if (Boolean.parseBoolean(showSqlQueryValue)) {
-                LOG.info("Executing SQL Query: {}", query);
-                if (parameters != null && parameters.length > 0) {
-                    LOG.info("With parameters: {}", List.of(parameters));
-                }
+        if (PropertyConstants.getDatasourceShowSqlQuery()) {
+            LOG.info("Executing SQL Query: {}", query);
+            if (parameters != null && parameters.length > 0) {
+                LOG.info("With parameters: {}", List.of(parameters));
             }
         }
     }
 
     public static void setDataSource(DataSource dataSource) {
         DB.dataSource = dataSource;
+    }
+
+    public static DataSource getDataSource() {
+        return dataSource;
     }
 
 }

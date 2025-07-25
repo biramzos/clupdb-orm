@@ -2,7 +2,9 @@ package kz.ramiyel.clupdb.generator.table;
 
 import kz.ramiyel.clupdb.annotation.DBColumn;
 import kz.ramiyel.clupdb.annotation.DBIndex;
+import kz.ramiyel.clupdb.annotation.DBSequence;
 import kz.ramiyel.clupdb.annotation.DBTable;
+import kz.ramiyel.clupdb.constants.PropertyConstants;
 import kz.ramiyel.clupdb.model.TableModel;
 import kz.ramiyel.clupdb.enums.IncrementType;
 import kz.ramiyel.clupdb.util.StringUtil;
@@ -25,33 +27,31 @@ public class TableGenerator {
         DBTable table = clazz.getAnnotation(DBTable.class);
         if (tables.stream().anyMatch(t -> t.getName().equalsIgnoreCase(table.name()))) return null;
         String tableName = StringUtil.isEmpty(table.name()) ? clazz.getSimpleName().toLowerCase() : table.name();
-        String schema = StringUtil.isEmpty(table.schema()) ? "" : table.schema() + ".";
-
+        String defSchema = PropertyConstants.getDatasourceDatabaseSchema();
+        String schema = StringUtil.isEmpty(table.schema()) ? (StringUtil.isEmpty(defSchema) ? "" : defSchema) : table.schema();
         List<String> columns = new ArrayList<>();
         List<String> constraints = new ArrayList<>();
         List<String> indexStatements = new ArrayList<>();
         List<String> commentStatements = new ArrayList<>();
-        String fullTableName = schema + tableName;
-
+        String fullTableName = schema + "." + tableName;
         for (Field field : clazz.getDeclaredFields()) {
             if (!field.isAnnotationPresent(DBColumn.class)) continue;
             DBColumn column = field.getAnnotation(DBColumn.class);
-
             StringBuilder sb = new StringBuilder();
-            sb.append(column.name()).append(" ");
-
+            sb.append(column.name()).append(" ").append(column.type().getSqlType());
             if (column.autoIncrement()) {
                 if (column.incrementType() == IncrementType.IDENTITY) {
-                    sb.append(column.type().getSqlType()).append(" GENERATED ALWAYS AS IDENTITY");
+                    sb.append(" GENERATED ALWAYS AS IDENTITY");
                 } else if (column.incrementType() == IncrementType.SEQUENCE) {
-                    sb.append(column.type().getSqlType());
-                    sb.append(" DEFAULT nextval('").append(column.sequence().name()).append("'::regclass)");
+                    DBSequence sequence = column.sequence();
+                    String sequenceName = StringUtil.isNotEmpty(sequence.name())
+                            ? sequence.name() :
+                            (schema + "_" + tableName + "_" + column.name() + "_seq");
+                    sb.append(" DEFAULT nextval('").append(sequenceName).append("'::regclass)");
                     if (column.sequence().allocationSize() > 0) {
-                        sb.append(" ALLOCATED_SIZE ").append(column.sequence().allocationSize());
+                        sb.append(" ALLOCATED_SIZE ").append(sequence.allocationSize());
                     }
                 }
-            } else {
-                sb.append(column.type().getSqlType());
             }
 
             if (column.notNull()) sb.append(" NOT NULL");

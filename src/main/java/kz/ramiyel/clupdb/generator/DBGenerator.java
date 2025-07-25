@@ -5,6 +5,7 @@ import kz.ramiyel.clupdb.annotation.DBManagement;
 import kz.ramiyel.clupdb.annotation.DBProcedure;
 import kz.ramiyel.clupdb.annotation.DBTable;
 import kz.ramiyel.clupdb.annotation.DBTransaction;
+import kz.ramiyel.clupdb.constants.PropertyConstants;
 import kz.ramiyel.clupdb.generator.column.ColumnGenerator;
 import kz.ramiyel.clupdb.generator.index.IndexGenerator;
 import kz.ramiyel.clupdb.generator.management.FunctionGenerator;
@@ -35,20 +36,20 @@ public class DBGenerator {
     private final int batchSize;
 
     public DBGenerator(Reflections reflections) {
-        this(reflections, "public", 100);
+        this(reflections, PropertyConstants.getDatasourceDatabaseSchema(), PropertyConstants.getDatasourceBatchSize());
     }
 
     public DBGenerator(Reflections reflections, String schema) {
-        this(reflections, schema, 100);
+        this(reflections, schema, PropertyConstants.getDatasourceBatchSize());
     }
 
     public DBGenerator(Reflections reflections, int batchSize) {
-        this(reflections, "public", batchSize);
+        this(reflections, PropertyConstants.getDatasourceDatabaseSchema(), batchSize);
     }
 
     public DBGenerator(Reflections reflections, String schema, int batchSize) {
         this.reflections = reflections;
-        this.schema = schema;
+        this.schema = StringUtil.isEmpty(schema) ? "public" : schema;
         this.batchSize = batchSize;
     }
 
