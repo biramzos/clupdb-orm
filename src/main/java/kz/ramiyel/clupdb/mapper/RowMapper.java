@@ -1,6 +1,10 @@
 package kz.ramiyel.clupdb.mapper;
 
+import kz.ramiyel.clupdb.manager.DB;
 import kz.ramiyel.clupdb.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
@@ -8,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class RowMapper<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(RowMapper.class);
     private final Class<T> clazz;
 
     public RowMapper(Class<T> clazz) {
@@ -31,7 +36,8 @@ public class RowMapper<T> {
                 } catch (Exception ignored) {}
             }
             return instance;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             return null;
         }
     }

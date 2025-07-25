@@ -4,12 +4,12 @@ import kz.ramiyel.clupdb.enums.JoinType;
 import kz.ramiyel.clupdb.util.TableUtil;
 
 public class QueryJoin<From, Join> {
-    private Class<From> fromClass;
-    private Class<Join> joinClass;
-    private JoinType joinType;
-    private String fromVariable;
-    private String joinVariable;
-    private String[] additionalConditions;
+    private final Class<From> fromClass;
+    private final Class<Join> joinClass;
+    private final JoinType joinType;
+    private final String fromVariable;
+    private final String joinVariable;
+    private final String[] additionalConditions;
 
     public QueryJoin(Class<From> fromClass, Class<Join> joinClass, JoinType joinType, String fromVariable, String joinVariable, String... additionalConditions) {
         this.fromClass = fromClass;
