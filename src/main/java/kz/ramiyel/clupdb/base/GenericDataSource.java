@@ -13,7 +13,7 @@ public class GenericDataSource implements DataSource {
     private final String user;
     private final String password;
 
-    public GenericDataSource(String driverClassName, String url, String user, String password) {
+    public GenericDataSource(String driverClassName, String url, String user, String password) throws SQLException {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
@@ -22,6 +22,7 @@ public class GenericDataSource implements DataSource {
         this.url = url;
         this.user = user;
         this.password = password;
+        testConnection();
     }
 
     @Override
@@ -32,6 +33,18 @@ public class GenericDataSource implements DataSource {
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         return DriverManager.getConnection(url, username, password);
+    }
+
+    private void testConnection() throws SQLException {
+        try (Connection connection = getConnection()) {
+            if (connection.isValid(2)) {
+                System.out.println("Connection is valid.");
+            } else {
+                System.out.println("Connection is not valid.");
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 
     // other DataSource methods (not fully implemented for simplicity)
